@@ -1,5 +1,6 @@
 from flask import Flask
-from .routes.message.blueprint import message
+from .routes.transposition.blueprint import transposition
+from .routes.hashing.blueprint import hashing
 
 app = Flask(__name__)
 
@@ -9,4 +10,5 @@ def hello():
     return "Hello world, I'm a working API!"
 
 
-app.register_blueprint(message)
+app.register_blueprint(transposition)
+app.register_blueprint(hashing)

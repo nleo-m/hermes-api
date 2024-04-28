@@ -1,31 +1,50 @@
 from flask import request
 from .transposer import Transposer
+from .encoder import Encoder
 
 
 class Handler:
     def __init__(self):
         if request:
-            self.type = request.json["type"]
             self.setup()
-
-    def setup(self):
-        self.action = request.json.get("action", "cipher")
-        self.subject = self.get_subject()
-        self.driver = self.get_driver()
-        self.method = self.get_method()
 
     def handle(self):
         return self.method(self.subject)
 
+    def setup(self):
+        self.supported_actions_and_drivers = {
+            "transpose": Transposer,
+            "detranspose": Transposer,
+            "encode": Encoder,
+            "decode": Encoder,
+            "encrypt": "",
+            "decrypt": "",
+            "hash": "",
+        }
+        self.action = self.get_action()
+        self.driver = self.get_driver()
+        self.subject = self.get_subject()
+        self.method = self.get_method()
+
+    def get_action(self):
+        if self.action_is_supported():
+            return request.form["action"]
+
+    def action_is_supported(self):
+        if request.form["action"] not in self.supported_actions_and_drivers.keys():
+            return False
+
+        return True
+
     def get_driver(self):
-        if self.type == "transposition":
-            return Transposer()
+        driver = self.supported_actions_and_drivers.get(self.action)
+        return driver()
 
     def get_method(self):
         return self.method_is_supported()
 
     def method_is_supported(self):
-        req_method = request.json["method"]
+        req_method = request.form["method"]
         method = getattr(self.driver, f"{req_method}_{self.action}", None)
 
         if callable(method):
@@ -35,10 +54,10 @@ class Handler:
         if self.subject_is_a_file():
             return request.files["subject"].read()
 
-        return request.json["subject"].encode("utf-8")
+        return request.form["subject"].encode("utf-8")
 
     def subject_is_a_file(self):
-        if request.json.get("subject"):
+        if request.form.get("subject"):
             return False
 
         return True

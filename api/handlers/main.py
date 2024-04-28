@@ -1,6 +1,7 @@
 from flask import request
 from .transposer import Transposer
 from .encoder import Encoder
+from .hasher import Hasher
 
 
 class Handler:
@@ -19,7 +20,7 @@ class Handler:
             "decode": Encoder,
             "encrypt": "",
             "decrypt": "",
-            "hash": "",
+            "hash": Hasher,
         }
         self.action = self.get_action()
         self.driver = self.get_driver()

@@ -31,14 +31,14 @@ class Handler:
     def handle(self):
         ciphered_data = self.method(self.subject)
 
-        if not self.file_subject:
-            return ciphered_data
+        if self.file_subject:
+            return self.return_file(ciphered_data)
 
-        self.return_file()
+        return ciphered_data
 
-    def return_file():
+    def return_file(self, data):
         filename = request.files["subject"].filename
-        file = io.BytesIO()
+        file = io.BytesIO(data)
         return send_file(file, download_name=filename, as_attachment=True)
 
     def get_action(self):

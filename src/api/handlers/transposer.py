@@ -1,6 +1,6 @@
 class Transposer:
-    def reverse_cipher(self, string):
+    def reverse_transpose(self, string):
         return string[::-1]
 
-    def reverse_decipher(self, string):
-        return self.reverse_cipher(string)
+    def reverse_detranspose(self, string):
+        return self.reverse_transpose(string)

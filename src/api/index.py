@@ -4,7 +4,7 @@ from handlers.main import Handler
 app = Flask(__name__)
 
 
-@app.route("/", methods=["POST"])
+@app.route("/a", methods=["POST"])
 def main():
     handler = Handler()
     return handler.handle()

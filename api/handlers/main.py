@@ -1,7 +1,10 @@
-from flask import request
+from flask import request, send_file
+import io
+
 from .transposer import Transposer
 from .encoder import Encoder
 from .hasher import Hasher
+from .encrypter import Encrypter
 
 
 class Handler:
@@ -9,23 +12,34 @@ class Handler:
         if request:
             self.setup()
 
-    def handle(self):
-        return self.method(self.subject)
-
     def setup(self):
         self.supported_actions_and_drivers = {
             "transpose": Transposer,
             "detranspose": Transposer,
             "encode": Encoder,
             "decode": Encoder,
-            "encrypt": "",
-            "decrypt": "",
+            "encrypt": Encrypter,
+            "decrypt": Encrypter,
             "hash": Hasher,
         }
+        self.file_subject = False
         self.action = self.get_action()
         self.driver = self.get_driver()
         self.subject = self.get_subject()
         self.method = self.get_method()
+
+    def handle(self):
+        ciphered_data = self.method(self.subject)
+
+        if not self.file_subject:
+            return ciphered_data
+
+        self.return_file()
+
+    def return_file():
+        filename = request.files["subject"].filename
+        file = io.BytesIO()
+        return send_file(file, download_name=filename, as_attachment=True)
 
     def get_action(self):
         if self.action_is_supported():
@@ -53,6 +67,7 @@ class Handler:
 
     def get_subject(self):
         if self.subject_is_a_file():
+            self.file_subject = True
             return request.files["subject"].read()
 
         return request.form["subject"].encode("utf-8")

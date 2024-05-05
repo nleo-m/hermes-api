@@ -1,5 +1,5 @@
 from flask import Flask, request
-from handlers.main import Handler
+from .handlers.main import Handler
 
 app = Flask(__name__)
 

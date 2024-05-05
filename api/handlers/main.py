@@ -7,7 +7,7 @@ from .hasher import Hasher
 from .encrypter import Encrypter
 
 
-class Handler:
+class BHandler:
     def __init__(self):
         if request:
             self.setup()

@@ -1,12 +1,12 @@
 from flask import Flask, request
-from .handlers.main import BHandler as Handler
+from .handlers.main import BHandler
 
 app = Flask(__name__)
 
 
 @app.route("/", methods=["POST"])
 def main():
-    handler = Handler()
+    handler = BHandler()
     return handler.handle()
 
 
